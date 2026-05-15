@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Healthcare Lab — Hospital de teste (FHIR)</title>
+  <style>
+    :root {
+      --bg: #0c1222;
+      --panel: #151d32;
+      --accent: #3d9cfd;
+      --accent-dim: #2563a8;
+      --text: #e8eef8;
+      --muted: #8b9bb8;
+      --ok: #34d399;
+      --warn: #fbbf24;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, #1a2f4a 0%, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+    header { margin-bottom: 2rem; }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.35rem;
+    }
+    .tagline { color: var(--muted); font-size: 1rem; }
+    .grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+    .card {
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 1.25rem 1.35rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    }
+    .card h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .stat {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--ok);
+    }
+    .path { font-size: 0.8rem; color: var(--muted); word-break: break-all; margin-top: 0.5rem; }
+    code, .mono {
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      font-size: 0.85rem;
+      background: rgba(0,0,0,0.35);
+      padding: 0.12rem 0.35rem;
+      border-radius: 4px;
+    }
+    ul.endpoints { margin: 0; padding-left: 1.1rem; color: var(--muted); }
+    ul.endpoints li { margin: 0.4rem 0; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; color: #7ec4ff; }
+    .pill {
+      display: inline-block;
+      margin-top: 0.75rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: rgba(61, 156, 253, 0.15);
+      color: var(--accent);
+    }
+    .warn { color: var(--warn); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Healthcare Lab</h1>
+      <p class="tagline">Ambiente de teste hospitalar com dados sintéticos FHIR R4 (Synthea).</p>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Pacientes indexados</h2>
+        {% if fhir_dir_exists %}
+          <div class="stat">{{ patient_count }}</div>
+          <p class="pill">Bundle JSON por paciente</p>
+        {% else %}
+          <p class="warn">Pasta FHIR não encontrada. Verifique <code>FHIR_DATA_DIR</code> em <span class="mono">settings.py</span>.</p>
+        {% endif %}
+        <p class="path">{{ fhir_dir }}</p>
+      </div>
+
+      <div class="card">
+        <h2>API</h2>
+        <p style="margin:0 0 0.75rem;color:var(--muted);font-size:0.9rem;">
+          Metadados e lista de pacientes em JSON.
+        </p>
+        <p style="margin:0;"><a href="{% url 'hospital:api_root' %}"><code>/api/</code></a></p>
+        <p style="margin:0.5rem 0 0;"><a href="{% url 'hospital:patient_list' %}"><code>/api/patients/</code></a></p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1rem;">
+      <h2>Endpoints por recurso FHIR</h2>
+      <p style="color:var(--muted);font-size:0.95rem;margin-top:0;">
+        Substitua <span class="mono">{id}</span> pelo UUID do paciente (ex.: no nome do ficheiro Synthea após o último <span class="mono">_</span>).
+      </p>
+      <ul class="endpoints">
+        <li><span class="mono">GET /api/patients/</span> — lista (paginação: <span class="mono">limit</span>, <span class="mono">offset</span>)</li>
+        <li><span class="mono">GET /api/patients/{id}/</span> — resumo, recurso Patient e contagens</li>
+        <li><span class="mono">GET /api/patients/{id}/bundle/</span> — bundle FHIR completo</li>
+        <li><span class="mono">GET /api/patients/{id}/resource-types/</span> — tipos disponíveis com URLs</li>
+        <li><span class="mono">GET /api/patients/{id}/resources/Observation/</span> — exemplos: Condition, Encounter, MedicationRequest, Claim, …</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

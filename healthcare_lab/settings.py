@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-)$5cthl5f=q)yo3r-y#z)^rts09a0=&jm*2ti0lz-jfp+4xe7s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+# Synthea FHIR R4 bundles (one JSON file per patient)
+FHIR_DATA_DIR = BASE_DIR / 'synthea' / 'synthea_sample_data_fhir_r4_sep2019' / 'fhir'
 
 
 # Application definition
@@ -37,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'hospital',
 ]
 
 MIDDLEWARE = [
